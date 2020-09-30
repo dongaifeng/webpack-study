@@ -289,7 +289,7 @@ post npm后置钩子命令
 env命令：查看环境变量。
 
 
-```json
+```javascript
 "scripts": {
   "test": "echo \"Error: no test specified\" && exit 1",
   "predev": "rimraf ./dist", // predev dev前置命令 必须跟dev一样
