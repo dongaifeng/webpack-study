@@ -148,7 +148,7 @@ devtool:"cheap-module-source-map", // 线上⽣成配置
 ```
 
 
-```json
+```javascript
 devServer: {
     contentBase: './dist', // 告诉服务器从那个目录获取内容
       

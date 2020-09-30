@@ -5,9 +5,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require('webpack');
 
-
-console.log("环境变量：", process.env.Node_ENV)
-
 module.exports = {
 
   entry: './src/reactDemo.js',
@@ -17,22 +14,19 @@ module.exports = {
 
   output: {
     path: path.resolve(__dirname, './dist'),
-    filename: '[hash].js',
-    publicPath: './'
+    filename: '[hash].js'
   },
 
   module: {
     rules: [
       {
         test: /\.css$/,
-        include: path.resolve(__dirname, './src'),
         use:['style-loader', 'css-loader']
         // use:[MiniCssExtractPlugin.loader, 'css-loader']
       },
 
       {
         test: /\.(png|jpe?g|gif)$/,
-        include: path.resolve(__dirname, './src'),
         use: {
           loader: 'file-loader',
           options:{
@@ -44,7 +38,6 @@ module.exports = {
 
       {
         test: /\.(woff|woff2|eot|ttf)$/,
-        include: path.resolve(__dirname, './src/webfont'),
         use: {
           loader: 'file-loader',
           options:{
@@ -78,12 +71,6 @@ module.exports = {
             ]
           }
         }
-      },
-
-      {
-        test: /\.less$/,
-        include: path.resolve(__dirname, './src'),
-        use: ['style-loader', 'css-loader', 'less-loader', 'postcss-loader']
       }
 
     ]
@@ -102,7 +89,7 @@ module.exports = {
     //   filename: 'css/[name]_[contenthash:6].css'
     // }),
 
-    new webpack.HotModuleReplacementPlugin()
+    new webpack.HashedModuleIdsPlugin()
   ],
 
   devtool: 'cheap-module-eval-source-map',
@@ -113,14 +100,5 @@ module.exports = {
     port: 7777,
     hot: true,
     hotOnly: true
-  },
-
-  resolve: {
-    modules: [ path.resolve(__dirname, './node_modules') ],
-    alias: {
-      '@': path.join(__dirname, './page'),
-      'react': path.resolve(__dirname, './node_modules/react/umd/react.production.min.js'),
-      'react-dom': path.resolve(__dirname, './node_modules/react-dom/umd/react-dom.production.min.js')
-    }
   }
 }

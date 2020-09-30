@@ -3,20 +3,20 @@ const path = require('path');
 const htmlwebpackplugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require('webpack');
+const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 
-
-console.log("环境变量：", process.env.Node_ENV)
+const PurifyCSS = require('purifycss-webpack')
+const glob = require('glob-all')
 
 module.exports = {
 
   entry: './src/reactDemo.js',
   // entry: './src/index.js',
 
-  mode: 'development',
+  mode: 'production',
 
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, './build'),
     filename: '[hash].js',
     publicPath: './'
   },
@@ -24,10 +24,15 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.less$/,
+        include: path.resolve(__dirname, './src'),
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'less-loader', 'postcss-loader']
+      },
+
+      {
         test: /\.css$/,
         include: path.resolve(__dirname, './src'),
-        use:['style-loader', 'css-loader']
-        // use:[MiniCssExtractPlugin.loader, 'css-loader']
+        use: [MiniCssExtractPlugin.loader, 'css-loader']
       },
 
       {
@@ -35,7 +40,7 @@ module.exports = {
         include: path.resolve(__dirname, './src'),
         use: {
           loader: 'file-loader',
-          options:{
+          options: {
             name: '[name].[ext]',
             outputPath: 'images',
           }
@@ -47,7 +52,7 @@ module.exports = {
         include: path.resolve(__dirname, './src/webfont'),
         use: {
           loader: 'file-loader',
-          options:{
+          options: {
             name: '[name].[ext]',
           }
         }
@@ -78,12 +83,6 @@ module.exports = {
             ]
           }
         }
-      },
-
-      {
-        test: /\.less$/,
-        include: path.resolve(__dirname, './src'),
-        use: ['style-loader', 'css-loader', 'less-loader', 'postcss-loader']
       }
 
     ]
@@ -93,34 +92,80 @@ module.exports = {
     new htmlwebpackplugin({
       title: '首页',
       template: './src/index.html',
-      filename: 'index.html'
+      filename: 'index.html',
+
+      // minify: {
+      //   // 压缩HTML⽂件
+      //   removeComments: true, // 移除HTML中的注释
+      //   collapseWhitespace: true, // 删除空⽩符与换⾏符
+      //   minifyCSS: true // 压缩内联css
+      // }
     }),
 
     new CleanWebpackPlugin(),
 
-    // new MiniCssExtractPlugin({
-    //   filename: 'css/[name]_[contenthash:6].css'
+    new MiniCssExtractPlugin({
+      filename: 'css/[name]_[contenthash:6].css'
+    }),
+
+    // new OptimizeCSSAssetsPlugin({
+    //   cssProcessor: require("cssnano"), //引⼊cssnano配置压缩选项
+    //   cssProcessorOptions: {
+    //     discardComments: { removeAll: true }
+    //   }
     // }),
 
-    new webpack.HotModuleReplacementPlugin()
+    // 清除⽆⽤ css
+    new PurifyCSS({
+      paths: glob.sync([
+        // 要做 CSS Tree Shaking 的路径⽂件
+        path.resolve(__dirname, './src/*.html'),
+        path.resolve(__dirname, './src/*.js')
+      ])
+    })
+
   ],
 
-  devtool: 'cheap-module-eval-source-map',
+  // devtool: 'cheap-module-eval-source-map',
 
-  devServer: {
-    contentBase: './dist',
-    open: true,
-    port: 7777,
-    hot: true,
-    hotOnly: true
-  },
+  // devServer: {
+  //   contentBase: './dist',
+  //   open: true,
+  //   port: 7777,
+  //   hot: true,
+  //   hotOnly: true
+  // },
 
   resolve: {
-    modules: [ path.resolve(__dirname, './node_modules') ],
+    modules: [path.resolve(__dirname, './node_modules')],
     alias: {
       '@': path.join(__dirname, './page'),
       'react': path.resolve(__dirname, './node_modules/react/umd/react.production.min.js'),
       'react-dom': path.resolve(__dirname, './node_modules/react-dom/umd/react-dom.production.min.js')
+    }
+  },
+
+  optimization: {
+    usedExports: true,
+
+    splitChunks: {
+      chunks: 'all',
+      minSize: 40000,//最⼩尺⼨，当模块⼤于30kb
+
+      // 缓存组 查找到对应的引用 独立打包
+      cacheGroups: {
+        lodash: {
+          test: /lodash/,
+          name: 'lodash',
+          minChunks: 1
+        },
+
+        react: {
+          test: /react|react-dom/,
+          name: 'react',
+          minChunks: 1
+        }
+      }
     }
   }
 }

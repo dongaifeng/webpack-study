@@ -1,0 +1,14 @@
+@font-face {
+  font-family: "webfont";
+  font-display: swap;
+  src: url(./webfont.woff2) format('woff2');
+}
+
+body {
+  font-size: 40px;
+  font-family: "webfont" !important;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: yellow;
+}
