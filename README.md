@@ -148,7 +148,7 @@ devtool:"cheap-module-source-map", // 线上⽣成配置
 ```
 
 
-```json
+```javascript
 devServer: {
     contentBase: './dist', // 告诉服务器从那个目录获取内容
       
@@ -222,7 +222,7 @@ import "@babel/polyfill";
 ```
 
 
-```json
+```javascript
 {
  test: /\.js$/,
  exclude: /node_modules/,
@@ -239,7 +239,7 @@ import "@babel/polyfill";
 因为进入 @babel/polyfill 会污染业务模块，使业务代码体积变大，所以需要设置按需引入。
 
 
-```json
+```javascript
 // index.js 顶部 
 // 删除 @babel/polyfill的引入
 // import "@babel/polyfill";
