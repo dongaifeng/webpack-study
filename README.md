@@ -222,7 +222,7 @@ import "@babel/polyfill";
 ```
 
 
-```json
+```javascript
 {
  test: /\.js$/,
  exclude: /node_modules/,
@@ -239,7 +239,7 @@ import "@babel/polyfill";
 因为进入 @babel/polyfill 会污染业务模块，使业务代码体积变大，所以需要设置按需引入。
 
 
-```json
+```javascript
 // index.js 顶部 
 // 删除 @babel/polyfill的引入
 // import "@babel/polyfill";
@@ -289,7 +289,7 @@ post npm后置钩子命令
 env命令：查看环境变量。
 
 
-```json
+```javascript
 "scripts": {
   "test": "echo \"Error: no test specified\" && exit 1",
   "predev": "rimraf ./dist", // predev dev前置命令 必须跟dev一样
