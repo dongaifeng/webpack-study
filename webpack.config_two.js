@@ -3,14 +3,10 @@ const path = require('path');
 const htmlwebpackplugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
-const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
+const AddAssetHtmlWebpackPlugin = require('add-asset-html-webpack-plugin');
+// const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const webpack = require('webpack');
-// const DllReferencePlugin = webpack.DllReferencePlugin 
-
-const os = require('os');
-const HappyPack = require('happypack');
-const happyThreadPool = HappyPack.ThreadPool({ size:os.cpus().length })
+const DllReferencePlugin = webpack.DllReferencePlugin 
 
 console.log("环境变量：", process.env.Node_ENV)
 
@@ -32,26 +28,20 @@ module.exports = {
       {
         test: /\.css$/,
         include: path.resolve(__dirname, './src'),
-        // use:['style-loader', 'css-loader']
+        use:['style-loader', 'css-loader']
         // use:[MiniCssExtractPlugin.loader, 'css-loader']
-
-        use: [
-          { loader: 'happypack/loader?id=mycss'}
-        ]
       },
 
       {
         test: /\.(png|jpe?g|gif)$/,
         include: path.resolve(__dirname, './src'),
-        // use: {
-        //   loader: 'file-loader',
-        //   options:{
-        //     name: '[name].[ext]',
-        //     outputPath: 'images',
-        //   }
-        // }
-
-        use: ["happypack/loader?id=myimg"]
+        use: {
+          loader: 'file-loader',
+          options:{
+            name: '[name].[ext]',
+            outputPath: 'images',
+          }
+        }
       },
 
       {
@@ -116,42 +106,21 @@ module.exports = {
 
     new webpack.HotModuleReplacementPlugin(),
 
-    // new DllReferencePlugin({
-    //   manifest: require('./dll/lodash-mainfest.json')
-    // }),
-
-    // new DllReferencePlugin({
-    //   manifest: require('./dll/react-mainfest.json')
-    // }),
-
-    // new AddAssetHtmlWebpackPlugin({
-    //   filepath: path.resolve(__dirname, './dll/react-dll.js')
-    // }),
-
-    // new AddAssetHtmlWebpackPlugin({
-    //   filepath: path.resolve(__dirname, './dll/lodash-dll.js')
-    // })
-
-    new HardSourceWebpackPlugin(),
-
-    new HappyPack({
-      id: 'mycss',
-      loaders: ["style-loader", "css-loader"],
-      threadPool: happyThreadPool
+    new DllReferencePlugin({
+      manifest: require('./dll/lodash-mainfest.json')
     }),
 
-    new HappyPack({
-      id: 'myimg',
-      loaders: [{
-        loader: 'file-loader',
-        options:{
-          name: '[name].[ext]',
-          outputPath: 'images',
-      }
-      }],
-      threadPool: happyThreadPool
-    })
+    new DllReferencePlugin({
+      manifest: require('./dll/react-mainfest.json')
+    }),
 
+    new AddAssetHtmlWebpackPlugin({
+      filepath: path.resolve(__dirname, './dll/react-dll.js')
+    }),
+
+    new AddAssetHtmlWebpackPlugin({
+      filepath: path.resolve(__dirname, './dll/lodash-dll.js')
+    })
   ],
 
   devtool: 'cheap-module-eval-source-map',

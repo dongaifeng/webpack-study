@@ -7,7 +7,7 @@ import _ from "lodash";
 
 import { a, b } from "./treeShakingTest";
 
-a()
+// a()
 
 // 使用下 要不会被摇树掉
 console.log(_.join(['a','b','c','****']))
