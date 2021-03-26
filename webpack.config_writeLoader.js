@@ -8,6 +8,8 @@ const HardSourceWebpackPlugin = require('hard-source-webpack-plugin');
 const webpack = require('webpack');
 // const DllReferencePlugin = webpack.DllReferencePlugin 
 
+const MyWebpackPlugin = require('./myPlugin/my-webpack-plugin')
+
 const os = require('os');
 const HappyPack = require('happypack');
 const happyThreadPool = HappyPack.ThreadPool({ size:os.cpus().length })
@@ -58,6 +60,10 @@ module.exports = {
       title: '首页',
       template: './src/index.html',
       filename: 'index.html'
+    }),
+
+    new MyWebpackPlugin({
+      name: '我的插件'
     })
 
   ],
